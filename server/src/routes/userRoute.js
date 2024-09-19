@@ -17,8 +17,8 @@ router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
 
-// Protected routes
-router.get('/user', protect, getUser);
-router.patch('/update', protect, updateUser);
+// Protected routes (require authentication)
+router.get('/user', protect, getUser);  // Fetch current user details
+router.patch('/update', protect, updateUser);  // Update user details
 
 module.exports = router;
