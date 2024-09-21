@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'], 
+        graduate: ['Graduate', 'serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

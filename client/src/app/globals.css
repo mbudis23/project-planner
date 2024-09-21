@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* @import url('https://fonts.googleapis.com/css2?family=Graduate&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Graduate&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -21,7 +24,16 @@ body {
 }
 
 @layer utilities {
-  .text-balance {
+.text-balance {
     text-wrap: balance;
   }
+}
+
+.font-graduate {
+  font-family: "Graduate", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.font-montserrat {
+  font-family: "Montserrat", serif;
 }
