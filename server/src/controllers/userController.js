@@ -27,7 +27,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
-      token: user.getSignedJwtToken(),
+      message: "Register Success"
     });
   } else {
     res.status(400);

@@ -4,6 +4,7 @@ const userRoutes = require('./src/routes/userRoute');
 const projectRoutes = require('./src/routes/projectRoute');
 const taskRoutes = require('./src/routes/taskRoute');
 const { notFound, errorHandler } = require('./src/middlewares/errorMiddleware');
+const morgan = require('morgan')
 
 const connectDB = require('./src/config/db');
 const cors = require('cors')
@@ -15,6 +16,8 @@ const app = express();
 
 // Body parser middleware
 app.use(express.json());
+app.use(morgan('dev'));
+app.use(cors({ origin: 'http://localhost:3000' })); 
 
 // Route middleware
 app.use('/api/users', userRoutes);
