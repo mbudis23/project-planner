@@ -1,5 +1,6 @@
-const User = require('../models/userModel');
-const asyncHandler = require('express-async-handler');
+const User = require("../models/userModel");
+const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
 
 // @desc    Register new user
 // @route   POST /api/users/register
@@ -11,7 +12,7 @@ exports.registerUser = asyncHandler(async (req, res) => {
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
-    throw new Error('User already exists');
+    throw new Error("User already exists");
   }
 
   // Create a new user
@@ -27,11 +28,11 @@ exports.registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
-      message: "Register Success"
+      message: "Register Success",
     });
   } else {
     res.status(400);
-    throw new Error('Invalid user data');
+    throw new Error("Invalid user data");
   }
 });
 
@@ -44,15 +45,25 @@ exports.loginUser = asyncHandler(async (req, res) => {
   // Check if user exists
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
-    res.json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      token: user.getSignedJwtToken(),
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.cookie("token", token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
+      sameSite: "Strict", // Helps against CSRF attacks
+      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+    });
+    res.status(200).json({
+      // _id: user._id,
+      // username: user.username,
+      // email: user.email,
+      // token: user.getSignedJwtToken(),
+      message: "Log in successful",
     });
   } else {
     res.status(401);
-    throw new Error('Invalid credentials');
+    throw new Error("Invalid credentials");
   }
 });
 
@@ -70,7 +81,7 @@ exports.getUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 });
 
@@ -99,20 +110,55 @@ exports.updateUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(404);
-    throw new Error('User not found');
+    throw new Error("User not found");
   }
 });
 
-
 // Forgot password
 exports.forgotPassword = asyncHandler(async (req, res) => {
-    // Logic for forgot password
-    res.send('Forgot password logic goes here');
-  });
-  
-  // Reset password
-  exports.resetPassword = asyncHandler(async (req, res) => {
-    const { token } = req.params;
-    // Logic for reset password with the token
-    res.send('Reset password logic with token goes here');
-  });
+  // Logic for forgot password
+  res.send("Forgot password logic goes here");
+});
+
+// Reset password
+exports.resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  // Logic for reset password with the token
+  res.send("Reset password logic with token goes here");
+});
+
+// @desc    Verify user token
+// @route   POST /api/users/verify-token
+// @access  Private
+exports.verifyToken = asyncHandler(async (req, res) => {
+  // Get the token from the authorization header
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    res.status(401);
+    throw new Error("No token provided, authorization denied");
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find user by ID from the decoded token
+    const user = await User.findById(decoded.id).select("-password"); // Exclude password from the response
+
+    if (!user) {
+      res.status(404);
+      throw new Error("User not found");
+    }
+
+    // Respond with user information
+    res.status(200).json({
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    });
+  } catch (error) {
+    res.status(401);
+    throw new Error("Token is not valid");
+  }
+});

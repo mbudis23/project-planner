@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const userRoutes = require('./src/routes/userRoute');
 const projectRoutes = require('./src/routes/projectRoute');
 const taskRoutes = require('./src/routes/taskRoute');
@@ -17,7 +18,11 @@ const app = express();
 // Body parser middleware
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(cors({ origin: 'http://localhost:3000' })); 
+app.use(cors({ 
+    origin: 'http://localhost:3000',
+    credentials: true,
+})); 
+app.use(cookieParser());
 
 // Route middleware
 app.use('/api/users', userRoutes);

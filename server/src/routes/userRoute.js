@@ -6,6 +6,7 @@ const {
   forgotPassword,
   resetPassword,
   getUser,
+  verifyToken,
 } = require('../controllers/userController');
 const { protect } = require('../middlewares/authMiddleware');
 
@@ -16,6 +17,7 @@ router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', resetPassword);
+router.post('/verify-token', verifyToken);
 
 // Protected routes (require authentication)
 router.get('/user', protect, getUser);  // Fetch current user details
