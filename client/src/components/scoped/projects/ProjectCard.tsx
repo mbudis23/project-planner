@@ -1,8 +1,9 @@
 "use client"
 import PrimaryButton from "@/components/global/PrimaryButton";
+import axios from "axios";
+import Link from "next/link";
 import { useState } from "react";
 import { AiOutlineCaretDown } from "react-icons/ai";
-
 export default function ProjectCard({title, desc, id}){
     const [isOpen,setIsOpen] = useState(false)
     return(
@@ -24,11 +25,11 @@ export default function ProjectCard({title, desc, id}){
                 <p className="text-justify">
                     {desc}
                 </p>
-                <div className="w-full flex justify-end">
+                <Link href={`/projects/${id}`} className="w-full flex justify-end">
                     <PrimaryButton>
                         Detail
                     </PrimaryButton>
-                </div>
+                </Link>
             </div>
         </div>
         </>
